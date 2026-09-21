@@ -1,4 +1,15 @@
 {
-  "repos": {},
+  "repos": {
+    "sep/luxafor-cli": {
+      "first_seen": "2026-09-21",
+      "last_seen": "2026-09-21",
+      "last_pushed_at": "2026-09-21T17:24:04Z"
+    },
+    "sep/cc-status-plugin": {
+      "first_seen": "2026-09-21",
+      "last_seen": "2026-09-21",
+      "last_pushed_at": "2026-09-11T14:49:19Z"
+    }
+  },
   "delisted": {}
 }
