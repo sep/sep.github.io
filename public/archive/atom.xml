@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>SEP Bits and Bytes</title>
+ <link href="http://sep.github.com/atom.xml" rel="self"/>
+ <link href="http://sep.github.com"/>
+ <updated>2026-09-04T16:58:20+00:00</updated>
+ <id>http://sep.github.com</id>
+ <author>
+   <name>Jon Fuller and the rest of the SEPeers</name>
+   <email>jcfuller@sep.com</email>
+ </author>
+
+ 
+ <entry>
+   <title>echo</title>
+   <link href="http://sep.github.com/shell/2012/11/01/echo"/>
+   <updated>2012-11-01T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/11/01/echo</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash)&lt;/p&gt;
+
+&lt;p&gt;Today, an easy one from the &lt;a href=&quot;shell/2012/06/15/xargs/&quot;&gt;list&lt;/a&gt; of commands you should know: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Close your eyes for a moment and speculate about what &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt; does. You’re right!&lt;/p&gt;
+
+&lt;p&gt;According to the man page, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt; “write[s] arguments to the standard output”.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; echo Hello, world.
+Hello, world.
+
+&amp;gt; echo &quot;Hello, world.&quot;
+Hello, world.
+
+&amp;gt; echo &quot;Hello, world.&quot; &quot;Foo&quot;
+Hello, world. Foo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;By default, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt; adds a newline at the end of its output. For writing things to the screen, this is likely exactly what you want. (Yay!) However, if you’re planning to pipe echo’s output to some other commands input, you might not want the newline.&lt;/p&gt;
+
+&lt;p&gt;Enter &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-n&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; echo mySecretPassw0rd | shasum 
+0f7262d74d2d48c30121c7e80a5bda5d22968a32  -
+
+&amp;gt; echo -n mySecretPassw0rd | shasum
+de72bcbdefa256e34fac7fb0abe08b43aa54df49  -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s it…&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt; only has the one option. It does one thing…and it does it well. It’s handy in scripts and in the middle of one-liners. It’s less handy by itself.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>cut</title>
+   <link href="http://sep.github.com/shell/2012/06/29/cut"/>
+   <updated>2012-06-29T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/29/cut</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash)&lt;/p&gt;
+
+&lt;p&gt;Recently, when proofreading my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt; post, a coworker asked “Cut? What does that do?” So, back into the trenches to investigate one of the super-cool, fundamental building blocks of really great command line concoctions.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;% echo &quot;1,red,grumpy\n2,orange,sleepy\n3,yellow,doc&quot;
+1,red,grumpy
+2,orange,sleepy
+3,yellow,doc
+
+% echo &quot;1,red,grumpy\n2,orange,sleepy\n3,yellow,doc&quot; | cut -d, -f2
+red
+orange
+yellow
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;According to the man page, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt; “cuts out selected portions of each line of a file”. As usual, instead of an input file, we can use the output of some other command piped in through stdin. the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-d,&lt;/code&gt; option above tells &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt; that the lines to be processed are comma-delimited. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-f2&lt;/code&gt; specifies that we want the second “field” in each line returned.&lt;/p&gt;
+
+&lt;p&gt;To conserve some typing, let’s set up a file to experiment on:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;% echo &quot;1,red,grumpy,monday\n2,orange,sleepy,tuesday\n3,yellow,doc,wednesday&quot; \
+&amp;gt;&amp;gt; test.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, we can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt; on the file rather than stdin:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;% cut -d, -f2 test.txt
+red
+orange
+yellow
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can also do multiple fields in several ways:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;% cut -d, -f2,4 test.txt
+red,monday
+orange,tuesday
+yellow,wednesday
+
+% cut -d, -f2-4 test.txt
+red,grumpy,monday
+orange,sleepy,tuesday
+yellow,doc,wednesday
+
+% cut -d, -f2- test.txt
+red,grumpy,monday
+orange,sleepy,tuesday
+yellow,doc,wednesday
+
+% cut -d, -f-3 test.txt
+1,red,grumpy
+2,orange,sleepy
+3,yellow,doc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;One important caveat…&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt; won’t reorder fields:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;% cut -d, -f2,4 test.txt
+red,monday
+orange,tuesday
+yellow,wednesday
+
+% cut -d, -f4,2 test.txt
+red,monday
+orange,tuesday
+yellow,wednesday
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Reordering fields takes something a little more sophisticated; like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awk&lt;/code&gt; or a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;while&lt;/code&gt; loop. (More on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awk&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;while&lt;/code&gt; later.)&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt; will, however, happily work on bytes or characters rather than delimited fields if you have data that’s already columnar. Look at the output of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps&lt;/code&gt;, for example:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;% ps x
+PID   TT  STAT      TIME COMMAND
+251   ??  Ss     0:00.95 /sbin/launchd
+254   ??  S      0:01.30 /usr/libexec/UserEventAgent -l Aqua
+256   ??  S      0:06.10 /usr/sbin/distnoted agent
+259   ??  S      0:02.46 /System/Library/Frameworks/ApplicationServices.frame
+261   ??  S      0:00.01 /usr/sbin/pboard
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt; can condense and pick out just the pieces you want to see:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;% ps x | cut -c-6,18-40 
+PID      TIME COMMAND
+251   0:00.97 /sbin/launchd
+254   0:01.30 /usr/libexec/
+256   0:06.13 /usr/sbin/dis
+259   0:02.47 /System/Libra
+261   0:00.01 /usr/sbin/pbo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So, go experiment with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt;. It does one pretty straightfoward thing…and it does it really well.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>follow your tail</title>
+   <link href="http://sep.github.com/shell/2012/06/26/follow-your-tail"/>
+   <updated>2012-06-26T07:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/26/follow-your-tail</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;Riding the coat-tails of yesterday’s &lt;a href=&quot;http://sep.github.com/shell/2012/06/25/head-to-tail&quot;&gt;head and tail&lt;/a&gt; post… is another &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tail&lt;/code&gt; trick.&lt;/p&gt;
+
+&lt;p&gt;Just like &lt;a href=&quot;http://en.wikipedia.org/wiki/Toucan_Sam&quot;&gt;Toucan Sam&lt;/a&gt; never said:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Follow Your Tail&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Not Toucan Sam&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Anyways, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tail -f&lt;/code&gt; (the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;f&lt;/code&gt; is for &lt;em&gt;follow&lt;/em&gt;) &lt;em&gt;follows&lt;/em&gt; a file as it is updated.&lt;/p&gt;
+
+&lt;p&gt;For example, say your application writes to a log file, and you’d like to watch the log as it gets appended to, without having to constantly hit &lt;em&gt;refresh&lt;/em&gt; in your editor.  Just pop open a terminal (or bash) and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tail -f /path/to/log.txt&lt;/code&gt; and watch the log entries start rolling in!&lt;/p&gt;
+
+&lt;p&gt;Pretty slick if you ask me.  I’ll even do this for unit test runs or builds that I &lt;a href=&quot;http://sep.github.com/shell/2012/06/18/i-lied-redirection/&quot;&gt;redirect&lt;/a&gt; their output to a file.  This way  the test or build runs faster since it doesn’t have to output to the screen, but I can still watch the output in another terminal or tab window.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>head to tail</title>
+   <link href="http://sep.github.com/shell/2012/06/25/head-to-tail"/>
+   <updated>2012-06-25T07:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/25/head-to-tail</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;Use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;head&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tail&lt;/code&gt; to dump the beginning, or end of a file, respectively, to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;STDOUT&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The default number of lines to show for both &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;head&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tail&lt;/code&gt; is 10.&lt;/p&gt;
+
+&lt;p&gt;For example, say you’ve got a log file and you’d like to see the first five entries, to make sure it’s from the session you’re trying to debug:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; head -5 /path/to/log.txt
+
+ &amp;gt; 2012-06-07 05:45:23 Application Started
+ &amp;gt; 2012-06-07 05:45:25 Database Service Started
+ &amp;gt; 2012-06-07 05:45:25 Login Service Started
+ &amp;gt; 2012-06-07 05:45:26 HTTP Server Started
+ &amp;gt; 2012-06-07 05:45:26 Waiting for HTTP Client Connections
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, to look at the last 50, so we can see everything that led up to the event we care about:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tail -50 /path/to/log.txt
+
+ &amp;gt; -snip-
+ &amp;gt; 2012-06-07 05:55:16 log log log... log log
+ &amp;gt; 2012-06-07 05:55:19 more log stuff
+ &amp;gt; 2012-06-07 05:55:19 KABOOM!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;head&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tail&lt;/code&gt; quite a bit to look at the beginnings and ends of files (particularly long XML files) so I can make the right data is being sent at the beginning and end of the file.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>clipboard</title>
+   <link href="http://sep.github.com/shell/2012/06/21/clipboard"/>
+   <updated>2012-06-21T07:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/21/clipboard</id>
+   <content type="html">
+&lt;p&gt;Shell/cmd - OS X, Windows&lt;/p&gt;
+
+&lt;p&gt;Place text or program output onto the clipboard from your shell!&lt;/p&gt;
+
+&lt;p&gt;For OS X (the &lt;em&gt;pb&lt;/em&gt; stands for &lt;em&gt;pasteboard&lt;/em&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;echo &quot;hello world&quot; | pbcopy
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For Windows:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;echo &quot;hello world&quot; | clip
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It works the same for both platforms with &lt;a href=&quot;shell/2012/06/18/i-lied-redirection/&quot;&gt;input redirection&lt;/a&gt; as well.  The following drops the contents of a file onto the clipboard:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pbcopy &amp;lt; src/LICENSE.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You’ll need to snag the Microsoft(tm) &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clip&lt;/code&gt; utility here: &lt;a href=&quot;http://www.petri.co.il/software/clip.zip&quot;&gt;http://www.petri.co.il/software/clip.zip&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Another example?  Sure!  Glad you asked.  Want a list of all the files in the current directory that start with the letter ‘A’ and put that on the clipboard?&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ls | grep &apos;^A&apos; | pbcopy
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is way easier than having to go pick up the mouse and highlight + copy.&lt;/p&gt;
+
+&lt;p&gt;I’m sure there are ways to do this in Linux too, I’d be glad for you to tell me.  Have I mentioned that not only are contributions accepted, they’re encouraged? (this is me encouraging you to contribute)&lt;/p&gt;
+
+&lt;p&gt;Happy clipboarding and contributing!&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>last dir</title>
+   <link href="http://sep.github.com/shell/2012/06/20/last-dir"/>
+   <updated>2012-06-20T10:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/20/last-dir</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;Change to your previous directory using the special directory marker &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; pwd
+&amp;gt;&amp;gt; /Users/jcfuller/Downloads
+&amp;gt; cd /Users/jcfuller/dev/github
+&amp;gt; pwd
+&amp;gt;&amp;gt; /Users/jcfuller/dev/github
+&amp;gt; cd -
+&amp;gt; pwd
+&amp;gt;&amp;gt; /Users/jcfuller/Downloads
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I use this quite a bit when I need to run a command from a specific directory, but then want to get right back to where I was.&lt;/p&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>cmd visual history</title>
+   <link href="http://sep.github.com/cmd/2012/06/19/cmd-visual-history"/>
+   <updated>2012-06-19T09:00:00+00:00</updated>
+   <id>http://sep.github.com/cmd/2012/06/19/cmd-visual-history</id>
+   <content type="html">
+&lt;p&gt;cmd.exe - Windows&lt;/p&gt;
+
+&lt;p&gt;Did you know you can use the up/down arrows in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cmd&lt;/code&gt; (or a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Visual Studio Command Prompt&lt;/code&gt; to scroll back through your history of commands?  Of course you knew that… nothing new there.&lt;/p&gt;
+
+&lt;p&gt;Did you know you could press &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;F7&lt;/code&gt; and see a visual version of your history?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/cmd.visualhistory.jpeg&quot; alt=&quot;cmd visual history&quot; title=&quot;CMD Visual History&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you’re in Windows, and use cmd.exe, this looks really helpful.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>I Lied: Redirection</title>
+   <link href="http://sep.github.com/shell/2012/06/18/i-lied-redirection"/>
+   <updated>2012-06-18T09:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/18/i-lied-redirection</id>
+   <content type="html">
+&lt;p&gt;Shell - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;I lied.  Twice.  Well, probably more than that, but specifically about &lt;a href=&quot;shell/2012/06/11/input-pipe/&quot;&gt;input&lt;/a&gt; and &lt;a href=&quot;shell/2012/06/13/output-pipe/&quot;&gt;output&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;These are really instances of input or output redirection.&lt;/p&gt;
+
+&lt;p&gt;We already covered that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt; is input redirection (I previously called this piping in from a file).&lt;/p&gt;
+
+&lt;p&gt;We also covered output redirection:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; - redirect output to a file&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&amp;gt;&lt;/code&gt; - redirect output and append to a file&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2&amp;gt;&lt;/code&gt; - redirect standard error to a file&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Sometimes I’d like both &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;STDOUT&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;STDERR&lt;/code&gt; to end up in the same file… check this out!&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;grep * &amp;gt; outfile 2&amp;gt;&amp;amp;1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt; outfile&lt;/code&gt; portion is just like from before.  The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2&amp;gt;&amp;amp;1&lt;/code&gt; portion says take &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;STDERR&lt;/code&gt; (2) and point it at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;STDOUT&lt;/code&gt; (1).&lt;/p&gt;
+
+&lt;p&gt;Redirecting to a black hole:&lt;/p&gt;
+
+&lt;p&gt;Redirect to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/null&lt;/code&gt; to send output into a black hole.&lt;/p&gt;
+
+&lt;p&gt;I use this when I’m running a program with lots of output that I don’t care about (outputting to the screen is slow!).  Redirect it to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/null&lt;/code&gt; and it will be much faster.&lt;/p&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>xargs</title>
+   <link href="http://sep.github.com/shell/2012/06/15/xargs"/>
+   <updated>2012-06-15T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/15/xargs</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash)&lt;/p&gt;
+
+&lt;p&gt;So, you want to sling command line like a boss, eh? I’ve heard it said and believe it more and more each day that the core things you should learn on the command line are &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;find&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sed&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cut&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;while&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt;. (add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wc&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sort&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;history&lt;/code&gt; to taste)&lt;/p&gt;
+
+&lt;p&gt;Of these, the one I see ignored most often is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt;. So, let’s check it out:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;xargs
+1
+2
+3
+4
+^D
+1 2 3 4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://unixhelp.ed.ac.uk/CGI/man-cgi?xargs&quot;&gt;Technically&lt;/a&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt; “reads space, tab, newline and end-of-file delimited strings from the standard input and executes [a command] with the strings as arguments”…and the default command is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So, in the above, we invoke &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt;, it starts listening to stdin, we provide a list of numbers separated by newlines, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;^D&lt;/code&gt; signals the end of the input, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt; turns our numbers into a space-separated list that gets passed to echo. Voila!&lt;/p&gt;
+
+&lt;p&gt;We could also separate things with tabs or spaces. We can even mix them:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;xargs
+1
+2 3
+4	5
+^D
+1 2 3 4 5
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In practice, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt; usually takes a list of things generated by some other command (like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;find&lt;/code&gt;) and iterates [a command] over them. What if we wanted to delete all the files larger than 100MB in the current directory tree?&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;find . -size 100M | xargs rm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;(If you’re really worried that this will hiccup on filenames with a space in them, you can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;find -print0&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs -0&lt;/code&gt; instead. Those create/consume null delimited lists instead. In practice, I’ve never had that be a problem.)&lt;/p&gt;
+
+&lt;p&gt;What if we wanted to clean up our project a little bit?&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;find . -name *.o | xargs rm -rf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;…and so on…&lt;/p&gt;
+
+&lt;p&gt;CAUTION: It’s &lt;em&gt;really&lt;/em&gt; easy to combine &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;find&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xargs&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rm&lt;/code&gt; in clever ways that will do terrible things to your system. Measure twice, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rm&lt;/code&gt; once.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>windows shell</title>
+   <link href="http://sep.github.com/shell/2012/06/14/windows-shell"/>
+   <updated>2012-06-14T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/14/windows-shell</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - Windows&lt;/p&gt;
+
+&lt;p&gt;Every post so far has been a shell trick, and they all say they work on Windows.  What am I smoking?&lt;/p&gt;
+
+&lt;p&gt;There are several ways to get a decent (though still not first class) shell on Windows.  You owe it to yourself to use at least one of them.&lt;/p&gt;
+
+&lt;h2 id=&quot;git-bash&quot;&gt;git-bash&lt;/h2&gt;
+
+&lt;p&gt;Install yourself some &lt;a href=&quot;http://code.google.com/p/msysgit/downloads/list&quot;&gt;msysgit&lt;/a&gt;, or better yet, &lt;a href=&quot;http://windows.github.com/&quot;&gt;github for windows&lt;/a&gt; or even &lt;a href=&quot;http://code.google.com/p/gitextensions/&quot;&gt;git extensions&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Any of these will get you a pretty full-featured bash.  The latter two also come with a pretty nice &lt;a href=&quot;http://git-scm.com/&quot;&gt;git&lt;/a&gt; gui.&lt;/p&gt;
+
+&lt;h2 id=&quot;cygwin&quot;&gt;cygwin&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.cygwin.com/&quot;&gt;Cygwin&lt;/a&gt;: Get that linux feeling on Windows.&lt;/p&gt;
+
+&lt;p&gt;A layer on top of Windows that can act as a linux API.&lt;/p&gt;
+
+&lt;p&gt;If you’re a linux geek and you’re stuck on Windows, check this thing out.  You can buy me beer later.  You’re welcome.&lt;/p&gt;
+
+&lt;h2 id=&quot;gow&quot;&gt;gow&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/bmatzelle/gow&quot;&gt;Gnu-On-Windows&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The (not-so) new kid on the block.&lt;/p&gt;
+
+&lt;p&gt;A lightweight version of cygwin.  Really, just a bunch of the gnu binaries (think ls, find, grep, gzip, etc.) in a simple installer.&lt;/p&gt;
+
+&lt;p&gt;Yes, there are others, and oh yeah, &lt;a href=&quot;http://en.wikipedia.org/wiki/Windows_PowerShell&quot;&gt;powershell&lt;/a&gt;, but I’m not going to talk about those.  If you’d like to, &lt;a href=&quot;mailto:fullerjc+bitsandbytes@gmail.com&quot;&gt;just let me know&lt;/a&gt;.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>output pipe</title>
+   <link href="http://sep.github.com/shell/2012/06/13/output-pipe"/>
+   <updated>2012-06-13T10:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/13/output-pipe</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;As mentioned &lt;a href=&quot;http://sep.github.com/shell/2012/06/11/input-pipe&quot;&gt;last time&lt;/a&gt;, many command line tools consume and/or produce text.&lt;/p&gt;
+
+&lt;p&gt;Even more useful than piping things into a program from a file, is piping things out of a program; either into another program, or into a file.&lt;/p&gt;
+
+&lt;p&gt;Take the previous example of gzipping an xml document.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gzip -c &amp;lt; thexmlfile.xml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Looking at the output of that, is going to be pretty unfriendly (actually, gzip tries to protect you from doing this to yourself, because it will likely start doing all sorts of wacky stuff to your terminal).  What to do?&lt;/p&gt;
+
+&lt;p&gt;Output it to a file:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gzip -c &amp;lt; thexmlfile.xml &amp;gt; thexmlfile.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now you’ve got a gzipped version of that xml file.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; operator is the key there.  That operator takes anything that is output from a program on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdout&lt;/code&gt; and puts it into the specified file.  If that file exists already, it’ll be overwritten.  I use this constantly when doing builds from the command line because I always want to be able to go back and search through the build output for any errors or warnings that happened.&lt;/p&gt;
+
+&lt;p&gt;Use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;gt;&amp;gt;&lt;/code&gt; if you’d like to append instead of overwrite.&lt;/p&gt;
+
+&lt;p&gt;What about &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stderr&lt;/code&gt;?  Try using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>input-pipe</title>
+   <link href="http://sep.github.com/shell/2012/06/11/input-pipe"/>
+   <updated>2012-06-11T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/11/input-pipe</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;Disclaimer: These pipes are to be used for tobacco only.&lt;/p&gt;
+
+&lt;p&gt;Most of the programs I use at the command line consume and/or produce text.  If you want to feed a program text that accepts input on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stdin&lt;/code&gt;, I’ll either pipe it in from the previous program, or pipe it in directly from file.&lt;/p&gt;
+
+&lt;p&gt;For example, if I’m &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gzipping&lt;/code&gt; up an xml file:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gzip -c &amp;lt; thexmlfile.xml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This dumps the contents of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;thexmlfile.xml&lt;/code&gt; directly into the gzip program.  Alternatively, sometimes I need to feed gzip the output of some other program:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cat thexmlfile.xml | gzip -c
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is functionally equivalent, but the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cat&lt;/code&gt; part could really be any program that generates output, possibly an xml cleaning tool like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xmllint&lt;/code&gt;.  The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;|&lt;/code&gt; passes any output from the previous command as input to the next command.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>touch</title>
+   <link href="http://sep.github.com/shell/2012/06/08/touch"/>
+   <updated>2012-06-08T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/08/touch</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - Windows/OS X/Linux&lt;/p&gt;
+
+&lt;p&gt;Occasionally (okay, at least once a day) I find myself needing to create an empty file.  Sometimes it’s to make sure I have write permissions in a particular directory, other times I want to create the file and then edit it in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vim&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;It’s easy enough to right click in the folder and click &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create new file&lt;/code&gt;, but if you’re already in the shell (and why aren’t you?), just try this command.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;touch path/to/the/file/you/want/to/create
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;touch&lt;/code&gt; command creates an empty file.  If the file already exists, it update the modified timestamp in the filesystem for that file.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>clear/cls</title>
+   <link href="http://sep.github.com/shell/2012/06/07/cls"/>
+   <updated>2012-06-07T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/07/cls</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;I live in the shell as much as possible.  Sometimes it’s hard to see what’s going on because there is so much junk in my scrollback (btw, you ought to up your scrollback to as large as possible, you never know when you need to scroll up through a week’s worth of work to see something you did last Monday).&lt;/p&gt;
+
+&lt;p&gt;Anyways, sometimes I just want to clear the screen.  Wouldn’t you know it…&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;clear
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s for bash-ish shells.  If you’re in Windows (in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cmd.exe&lt;/code&gt;) it’s:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cls
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;(It stands for clear screen)&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Open Explorer/Finder Here</title>
+   <link href="http://sep.github.com/shell/2012/06/06/new-explorer-finder"/>
+   <updated>2012-06-06T10:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/06/new-explorer-finder</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - Windows/OS X&lt;/p&gt;
+
+&lt;p&gt;Even though I love my shell, sometimes I want the gui.  Quickly open up a Windows Explorer or Finder window pointed to your current working directory with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explorer&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;open&lt;/code&gt; command (respectively).&lt;/p&gt;
+
+&lt;p&gt;Windows&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;explorer .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;OS X&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;open .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Of course, you can do many more things with both the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;open&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;explorer&lt;/code&gt; commands, but I use this one constantly.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>history | grep</title>
+   <link href="http://sep.github.com/shell/2012/06/05/history-grep"/>
+   <updated>2012-06-05T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/05/history-grep</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;Pipe &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;history&lt;/code&gt; into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep&lt;/code&gt; to search your past commands in a shell&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; history | grep unicorn
+&amp;gt; ... &amp;lt;snip&amp;gt;
+&amp;gt; 976  bundle exec unicorn -c config/unicorn/production.rb -E production -D
+&amp;gt; ... &amp;lt;/snip&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>cat</title>
+   <link href="http://sep.github.com/shell/2012/06/04/cat"/>
+   <updated>2012-06-04T00:00:00+00:00</updated>
+   <id>http://sep.github.com/shell/2012/06/04/cat</id>
+   <content type="html">
+&lt;p&gt;Shell (~bash) - OS X, Windows, Linux&lt;/p&gt;
+
+&lt;p&gt;Use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cat&lt;/code&gt; to dump the contents of a file to the screen&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cat .gitignore
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;At least 10 times a day I’m in a shell and want to see what is in a small text file.  Maybe it’s a log file, or configuration file.  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cat&lt;/code&gt; is the easiest way to get it onto the screen.&lt;/p&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>What the..?</title>
+   <link href="http://sep.github.com/meta/2012/05/31/intro"/>
+   <updated>2012-05-31T00:00:00+00:00</updated>
+   <id>http://sep.github.com/meta/2012/05/31/intro</id>
+   <content type="html">
+&lt;p&gt;The intent of this blog is to be a place to share short practical snippets of things you do every day that you’d like to share with other folks.&lt;/p&gt;
+
+&lt;p&gt;I’m envisioning things like shell/command prompt tricks, or a cool C# snippet.&lt;/p&gt;
+
+&lt;p&gt;If you have something that you’d like to share or contribute, &lt;a href=&quot;mailto:fullerjc+bitsandbytes@gmail.com&quot;&gt;shoot me an email&lt;/a&gt;, stop by my desk, tweet at me &lt;a href=&quot;http://twitter.com/jon_fuller&quot;&gt;@jon_fuller&lt;/a&gt;, send me a &lt;a href=&quot;http://github.com/sep/sep.github.com&quot;&gt;pull request&lt;/a&gt;, or anything else you can think of.&lt;/p&gt;
+
+&lt;p&gt;Here’s an example of what a typical post will look like:&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&amp;lt;Category&amp;gt; - &amp;lt;Platform&amp;gt;&lt;/p&gt;
+
+&lt;p&gt;Short description maybe including some &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;code&lt;/code&gt; or a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;snippet&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;usage of the actual command
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Some additional context on usage and how or why you use it every day.  This could be a one sentence testimonial, or a paragraph if it takes some explaining as to what’s going on.  Anyways, please contribute!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+</content>
+ </entry>
+ 
+ 
+</feed>

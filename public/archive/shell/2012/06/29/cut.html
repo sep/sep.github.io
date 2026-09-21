@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7 ie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8 ie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9 ie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>cut</title>
+	<meta name="author" content="Jon Fuller and the rest of the SEPeers">
+	<link href='/archive/assets/themes/the-program/css/style.css' rel="stylesheet" media="all">
+	<link href="http://feeds.feedburner.com/SepBitsAndBytes" rel="alternate" title="cut" type="application/atom+xml">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.0.6/modernizr.min.js"></script>
+</head>
+<body>
+<div style="background:#0e1425;color:#fbfcfe;font-family:Arial,sans-serif;font-size:15px;line-height:1.4;padding:10px 16px;text-align:center;">📦 You&rsquo;re viewing the archived SEP site &mdash; <a href="/" style="color:#bccef5;text-decoration:underline;">see the current FOSSS page</a>.</div>
+
+<div id="page" class="hentry">
+	<header class="the-header">
+		<div class="unit-head">
+			<div class="unit-inner unit-head-inner">
+				<nav class="nav-global">
+					<ul>
+						<li class="logo"><a href="/archive/"><img src="/archive/assets/bitsandbyteslogo-small.png" alt="SEP Bits and Bytes"></img></a></li>
+						<li class="archive"><a href="/archive/archive.html">archive</a></li>
+						<li class="page"><a href="/archive/pages.html">pages</a></li>
+						<li class="category"><a href="/archive/categories.html">categories</a></li>
+						<li class="tag"><a href="/archive/tags.html">tags</a></li>
+					</ul>
+				</nav>
+			</div><!-- unit-inner -->
+		</div><!-- unit-head -->
+	</header>
+	<div class="body" role="main">
+		<div class="unit-body">
+			<div class="unit-inner unit-body-inner">
+				<div class="entry-content">
+					
+<article class="unit-article layout-post">
+	<div class="unit-inner unit-article-inner">
+		<div class="content">
+			<header>
+				<div class="unit-head">
+					<div class="unit-inner unit-head-inner">
+						<h1 class="h2 entry-title">cut</h1>
+					</div><!-- unit-inner -->
+				</div><!-- unit-head -->
+			</header>
+
+			<div class="bd">
+				<div class="entry-content">
+					
+<p>Shell (~bash)</p>
+
+<p>Recently, when proofreading my <code class="language-plaintext highlighter-rouge">xargs</code> post, a coworker asked “Cut? What does that do?” So, back into the trenches to investigate one of the super-cool, fundamental building blocks of really great command line concoctions.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% echo "1,red,grumpy\n2,orange,sleepy\n3,yellow,doc"
+1,red,grumpy
+2,orange,sleepy
+3,yellow,doc
+
+% echo "1,red,grumpy\n2,orange,sleepy\n3,yellow,doc" | cut -d, -f2
+red
+orange
+yellow
+</code></pre></div></div>
+
+<p>According to the man page, <code class="language-plaintext highlighter-rouge">cut</code> “cuts out selected portions of each line of a file”. As usual, instead of an input file, we can use the output of some other command piped in through stdin. the <code class="language-plaintext highlighter-rouge">-d,</code> option above tells <code class="language-plaintext highlighter-rouge">cut</code> that the lines to be processed are comma-delimited. The <code class="language-plaintext highlighter-rouge">-f2</code> specifies that we want the second “field” in each line returned.</p>
+
+<p>To conserve some typing, let’s set up a file to experiment on:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% echo "1,red,grumpy,monday\n2,orange,sleepy,tuesday\n3,yellow,doc,wednesday" \
+&gt;&gt; test.txt
+</code></pre></div></div>
+
+<p>Now, we can use <code class="language-plaintext highlighter-rouge">cut</code> on the file rather than stdin:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% cut -d, -f2 test.txt
+red
+orange
+yellow
+</code></pre></div></div>
+
+<p>We can also do multiple fields in several ways:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% cut -d, -f2,4 test.txt
+red,monday
+orange,tuesday
+yellow,wednesday
+
+% cut -d, -f2-4 test.txt
+red,grumpy,monday
+orange,sleepy,tuesday
+yellow,doc,wednesday
+
+% cut -d, -f2- test.txt
+red,grumpy,monday
+orange,sleepy,tuesday
+yellow,doc,wednesday
+
+% cut -d, -f-3 test.txt
+1,red,grumpy
+2,orange,sleepy
+3,yellow,doc
+</code></pre></div></div>
+
+<p>One important caveat…<code class="language-plaintext highlighter-rouge">cut</code> won’t reorder fields:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% cut -d, -f2,4 test.txt
+red,monday
+orange,tuesday
+yellow,wednesday
+
+% cut -d, -f4,2 test.txt
+red,monday
+orange,tuesday
+yellow,wednesday
+</code></pre></div></div>
+
+<p>Reordering fields takes something a little more sophisticated; like <code class="language-plaintext highlighter-rouge">awk</code> or a <code class="language-plaintext highlighter-rouge">while</code> loop. (More on <code class="language-plaintext highlighter-rouge">awk</code> and <code class="language-plaintext highlighter-rouge">while</code> later.)</p>
+
+<p><code class="language-plaintext highlighter-rouge">cut</code> will, however, happily work on bytes or characters rather than delimited fields if you have data that’s already columnar. Look at the output of <code class="language-plaintext highlighter-rouge">ps</code>, for example:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% ps x
+PID   TT  STAT      TIME COMMAND
+251   ??  Ss     0:00.95 /sbin/launchd
+254   ??  S      0:01.30 /usr/libexec/UserEventAgent -l Aqua
+256   ??  S      0:06.10 /usr/sbin/distnoted agent
+259   ??  S      0:02.46 /System/Library/Frameworks/ApplicationServices.frame
+261   ??  S      0:00.01 /usr/sbin/pboard
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">cut</code> can condense and pick out just the pieces you want to see:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% ps x | cut -c-6,18-40 
+PID      TIME COMMAND
+251   0:00.97 /sbin/launchd
+254   0:01.30 /usr/libexec/
+256   0:06.13 /usr/sbin/dis
+259   0:02.47 /System/Libra
+261   0:00.01 /usr/sbin/pbo
+</code></pre></div></div>
+
+<p>So, go experiment with <code class="language-plaintext highlighter-rouge">cut</code>. It does one pretty straightfoward thing…and it does it really well.</p>
+
+					<div class="meta">
+						<p class="date-publish">
+							Published: 
+							<date class="date-pub" title="2012-06-29T00:00:00+00:00" datetime="2012-06-29T00:00:00+00:00" pubdate>
+							<span class="month"><abbr>June</abbr></span>
+							<span class="day">29</span>
+							<span class="year">2012</span>
+							</date>
+						</p>
+            <p class="date-publish">
+              Author:
+							<span class="year">trimble</span>
+						<ul class="list-category list-linear">
+							<li class="list-head">category: </li>
+							
+							
+
+
+  
+     
+    	<li><a href="/archive/categories.html#shell-ref">
+    		shell <span>16</span>
+    	</a></li>
+    
+  
+
+
+						</ul>
+						<ul class="list-tag list-linear">
+							<li class="list-head">tags: </li>
+							
+							
+
+
+  
+     
+    	<li><a href="/archive/tags.html#shell-ref">shell <span>15</span></a></li>
+     
+    	<li><a href="/archive/tags.html#stdin-ref">stdin <span>4</span></a></li>
+     
+    	<li><a href="/archive/tags.html#bash-ref">bash <span>4</span></a></li>
+     
+    	<li><a href="/archive/tags.html#pipe-ref">pipe <span>5</span></a></li>
+     
+    	<li><a href="/archive/tags.html#echo-ref">echo <span>2</span></a></li>
+     
+    	<li><a href="/archive/tags.html#awk-ref">awk <span>1</span></a></li>
+     
+    	<li><a href="/archive/tags.html#while-ref">while <span>1</span></a></li>
+     
+    	<li><a href="/archive/tags.html#ps-ref">ps <span>1</span></a></li>
+     
+    	<li><a href="/archive/tags.html#cut-ref">cut <span>1</span></a></li>
+    
+  
+
+
+
+						</ul>
+					</div><!-- meta -->
+				</div><!-- entry-content -->
+				<div class="misc-content">
+					<div class="social">
+						<ul class="list-linear">
+							<li><div class="twitter-tweet"><a href="https://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="SEPLabs" data-lang="en">Tweet</a></div></li>
+							<li><div class="twitter-follow"><a href="https://twitter.com/SEPLabs" class="twitter-follow-button" data-show-count="false" data-lang="en"></a></div></li>
+						</ul>
+					</div>
+					<div class="comment">
+					
+					</div>
+				</div><!-- misc-content -->
+			</div><!-- bd -->
+			<footer class="unit-foot">
+				<div class="unit-inner unit-foot-inner">
+					<nav class="pagination">
+						<ul>
+							
+							<li class="prev"><a class="internal" rel="prev"  href="/archive/shell/2012/06/26/follow-your-tail" title="View follow your tail">&laquo; follow your tail</a></li>
+							
+							
+							<li class="pipe"> | </li>
+							
+							
+							<li class="next"><a class="internal" rel="next"  href="/archive/shell/2012/11/01/echo" title="View echo">echo &raquo;</a></li>
+							
+						</ul>
+					</nav>
+					<p class="gotop">
+						<a href="#page">Back to Top</a>
+					</p>
+				</div>
+			</footer>
+
+		</div><!-- content -->
+	</div><!-- unit-inner -->
+</article>
+
+
+				</div>
+			</div><!-- unit-inner -->
+		</div><!-- unit-body -->
+	</div><!-- body -->
+	<footer class="the-footer">
+		<div class="unit-foot">
+			<div class="unit-inner unit-foot-inner">
+				<div class="misc vcard">
+					<h4>about</h4>
+					<ul>
+						<li class="contact"><address><span class="author fn n">Jon Fuller and the rest of the SEPeers</span> - <span class="fn email">jcfuller@sep.com</span></address></li>
+						<li class="github"><a href="http://github.com/sep/" rel="me">github.com/sep</a></li>
+						<li class="twitter"><a href="http://twitter.com/SEPLabs/" rel="me">twitter.com/SEPLabs</a></li>
+						<li class="rss"><a href="http://feeds.feedburner.com/SepBitsAndBytes">Subscribe to RSS Feed</a></li>
+					</ul>
+				</div><!-- misc -->
+				<p class="licence">
+					Theme: <a href="http://layouts-the.me">the_minimum</a> based on <a href="http://jekyllbootstrap.com/">Jekyll-bootstrap</a>.<br>
+					Powered by <a href="https://github.com/mojombo/jekyll">Jekyll</a>.
+				</p>
+			</div><!-- unit-foot-inner -->
+		</div><!-- unit-foot -->
+	</footer>
+</div><!-- page -->
+<script>
+	(function(d, s) {
+		var js, fjs = d.getElementsByTagName(s)[0], load = function(url, id) {
+		if (d.getElementById(id)) {return;}
+		js = d.createElement(s); js.src = url; js.id = id;
+		fjs.parentNode.insertBefore(js, fjs);
+		};
+	load('//platform.twitter.com/widgets.js', 'tweetjs');
+	// load('https://apis.google.com/js/plusone.js', 'gplus1js'); // Checkout http://j.mp/ApDgMr for usage html for this is <div class="g-plusone" data-size="medium"></div>
+	// load('//connect.facebook.net/en_US/all.js#xfbml=1', 'fbjssdk'); // Checkout http://j.mp/wZw2xR for using open graph protorol html for this is <div class="fb-like" data-href="/archive/shell/2012/06/29/cut" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="verdana"></div>
+	}(document, 'script'));
+</script>
+<script>
+/*! A fix for the iOS orientationchange zoom bug.Script by @scottjehl, rebound by @wilto. MIT License.*/
+(function(j){var i=j.document;if(!i.querySelectorAll){return}var l=i.querySelectorAll("meta[name=viewport]")[0],a=l&&l.getAttribute("content"),h=a+", maximum-scale=1.0",d=a+", maximum-scale=10.0",g=true,c=j.orientation,k=0;if(!l){return}function f(){l.setAttribute("content",d);g=true}function b(){l.setAttribute("content",h);g=false}function e(m){c=Math.abs(j.orientation);k=Math.abs(m.gamma);if(k>8&&c===0){if(g){b()}}else{if(!g){f()}}}j.addEventListener("orientationchange",f,false);j.addEventListener("deviceorientation",e,false)})(this);
+</script>
+  
+  
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-32288602-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+</body>
+</html>
+

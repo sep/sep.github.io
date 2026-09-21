@@ -1,0 +1,46 @@
+/**
+ * Design-pass fixtures. Used instead of the live API when FOSSS_FIXTURES=1,
+ * e.g. `FOSSS_FIXTURES=1 npm run dev` to work on the grid offline.
+ */
+export const fixtureRepos = [
+  {
+    name: 'sample-tool',
+    full_name: 'sep/sample-tool',
+    html_url: 'https://github.com/sep/sample-tool',
+    description: 'A command-line tool that does one thing well.',
+    language: 'Python',
+    has_pages: true,
+    stargazers_count: 42,
+    pushed_at: new Date(Date.now() - 4 * 86400_000).toISOString(),
+    topics: ['sep-oss'],
+    archived: false,
+    fork: false,
+    private: false,
+  },
+  {
+    name: 'no-description-here',
+    full_name: 'sep/no-description-here',
+    html_url: 'https://github.com/sep/no-description-here',
+    description: null,
+    language: 'C#',
+    stargazers_count: 3,
+    pushed_at: new Date(Date.now() - 40 * 86400_000).toISOString(),
+    topics: ['sep-oss'],
+    archived: false,
+    fork: false,
+    private: false,
+  },
+  {
+    name: 'ancient-but-useful',
+    full_name: 'sep/ancient-but-useful',
+    html_url: 'https://github.com/sep/ancient-but-useful',
+    description: 'Longer description to exercise wrapping: a framework for building things that build other things, with batteries included and removable.',
+    language: null,
+    stargazers_count: 128,
+    pushed_at: '2023-01-15T12:00:00Z',
+    topics: ['sep-oss'],
+    archived: false,
+    fork: false,
+    private: false,
+  },
+];

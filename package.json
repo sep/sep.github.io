@@ -1,0 +1,19 @@
+{
+  "name": "fosss",
+  "description": "FOSSS — free & open source software from SEP. The second S is for SEP.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "update-registry": "node scripts/update-registry.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fontsource/public-sans": "^5.2.5",
+    "astro": "^5.0.0"
+  }
+}

@@ -1,0 +1,71 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Mondays 11:00 UTC ≈ 6/7am Indianapolis.
+    #
+    # Note: GitHub disables `schedule:` triggers after ~60 days without repo
+    # activity. The registry commit below counts as activity, and while any
+    # repo is listed its `last_seen` field changes every run, so a weekly
+    # commit keeps the cron alive. If the org ever has zero listed repos for
+    # two months, re-enable the workflow manually from the Actions tab.
+    - cron: "0 11 * * 1"
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit data/registry.json
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Update registry
+        run: node scripts/update-registry.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit registry if changed
+        run: |
+          if ! git diff --quiet data/registry.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/registry.json
+            git commit -m "chore: update FOSSS registry [skip ci]"
+            git push
+          fi
+
+      - name: Build site
+        run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

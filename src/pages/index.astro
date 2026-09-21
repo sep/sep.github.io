@@ -1,0 +1,227 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import RepoCard from '../components/RepoCard.astro';
+import { fetchQualifyingRepos } from '../lib/github.js';
+import { fixtureRepos } from '../lib/fixtures.js';
+import sepLogo from '../assets/sep-logo-snow.svg';
+import heroIllustration from '../assets/web-illustration-light.svg';
+import emptyIllustration from '../assets/development-illustration.svg';
+
+const repos = process.env.FOSSS_FIXTURES === '1' ? fixtureRepos : await fetchQualifyingRepos();
+---
+
+<Base
+  title="FOSSS — open source from SEP"
+  description="Free & open source software released by SEPeers. The second S is for SEP."
+>
+  <header class="hero">
+    <svg class="hexes" viewBox="0 0 600 360" aria-hidden="true">
+      <g fill="none" stroke-width="2">
+        <path stroke="var(--color-blue-mid)" opacity="0.5" d="M120 20l52 30v60l-52 30-52-30V50z" />
+        <path stroke="var(--color-violet-mid)" opacity="0.45" d="M210 150l38 22v44l-38 22-38-22v-44z" />
+        <path stroke="var(--color-blue-light)" opacity="0.3" d="M80 220l64 37v74l-64 37-64-37v-74z" />
+        <path fill="var(--color-blue-dark)" stroke="none" opacity="0.6" d="M480 40l44 25.4v50.8L480 141.6l-44-25.4V65.4z" />
+        <path stroke="var(--color-gold)" opacity="0.35" d="M545 200l30 17.3v34.6L545 269.2l-30-17.3v-34.6z" />
+      </g>
+    </svg>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <h1>FOSSS</h1>
+        <p class="tagline">the second S is for SEP</p>
+        <p class="lede">Free &amp; open source software released by SEPeers.</p>
+      </div>
+      <Image src={heroIllustration} alt="" width="334" height="223" class="hero-art" loading="eager" />
+    </div>
+  </header>
+
+  <main>
+    <section class="wrap projects" aria-labelledby="projects-heading">
+      <h2 id="projects-heading">Projects</h2>
+      {
+        repos.length > 0 ? (
+          <div class="grid">
+            {repos.map((repo) => (
+              <RepoCard repo={repo} />
+            ))}
+          </div>
+        ) : (
+          <div class="empty">
+            <Image src={emptyIllustration} alt="" width="280" height="187" />
+            <p>
+              Nothing tagged yet — add the <code>sep-oss</code> topic to a public repo in the
+              <a href="https://github.com/sep">sep org</a> to appear here.
+            </p>
+          </div>
+        )
+      }
+    </section>
+
+    <section class="listed" aria-labelledby="listed-heading">
+      <div class="wrap">
+        <h2 id="listed-heading">How to get listed</h2>
+        <p>
+          Have a public repo in the <a href="https://github.com/sep">sep GitHub org</a>? Add the
+          <code>sep-oss</code> topic to it and it shows up here the following Monday. Remove the
+          topic to delist. Forks count too — fork your personal project into the org and tag it.
+          That's the whole process.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot-inner">
+      <a class="logo" href="https://www.sep.com/">
+        <Image src={sepLogo} alt="SEP" width="146" height="39" />
+      </a>
+      <p class="motto">SOFTWARE that matters more</p>
+      <nav aria-label="Footer">
+        <a href="https://www.sep.com/">sep.com</a>
+        <a href="https://github.com/sep/sep.github.io">FOSSS on GitHub</a>
+        <a href="/archive/">Looking for the old site?</a>
+      </nav>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--color-ink) 55%, var(--color-blue-dark));
+    color: var(--color-snow);
+    padding: 5rem 0 4.5rem;
+  }
+
+  .hexes {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+
+  h1 {
+    font-size: clamp(3.5rem, 9vw, 5.5rem);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+
+  .tagline {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-weight: 600;
+    color: var(--color-blue-light);
+    margin: 0 0 1rem;
+  }
+
+  .lede {
+    font-size: 1.1rem;
+    max-width: 32ch;
+    margin: 0;
+  }
+
+  .hero-art {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 47rem) {
+    .hero-art {
+      display: none;
+    }
+  }
+
+  .projects {
+    padding: 3.5rem 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    color: var(--color-blue);
+    margin-bottom: 1.25rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 2rem 0;
+    font-size: 1.05rem;
+  }
+
+  .empty p {
+    max-width: 44ch;
+  }
+
+  .listed {
+    background: var(--color-violet-lightest);
+    border-top: 4px solid var(--color-violet);
+    padding: 2.75rem 0;
+  }
+
+  .listed h2 {
+    color: var(--color-violet);
+  }
+
+  .listed p {
+    max-width: 70ch;
+    margin: 0;
+  }
+
+  .listed a {
+    color: var(--color-violet);
+  }
+
+  footer {
+    background: var(--color-ink);
+    color: var(--color-snow);
+    padding: 2.5rem 0;
+  }
+
+  .foot-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 3rem;
+  }
+
+  .logo {
+    display: inline-flex;
+  }
+
+  .motto {
+    margin: 0;
+    font-weight: 600;
+    color: var(--color-blue-light);
+  }
+
+  footer nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-left: auto;
+  }
+
+  footer nav a {
+    color: var(--color-snow);
+    text-decoration-color: var(--color-blue-mid);
+  }
+</style>

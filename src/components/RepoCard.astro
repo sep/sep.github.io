@@ -1,0 +1,123 @@
+---
+import { humanizeSince } from '../lib/time.js';
+import { primaryUrl } from '../lib/github.js';
+
+interface Props {
+  repo: {
+    name: string;
+    html_url: string;
+    has_pages?: boolean;
+    description: string | null;
+    language: string | null;
+    stargazers_count: number;
+    pushed_at: string;
+  };
+}
+
+const { repo } = Astro.props;
+const href = primaryUrl(repo);
+const hasSite = href !== repo.html_url;
+---
+
+<article class="card">
+  <h3><a href={href}>{repo.name}</a></h3>
+  {repo.description && <p class="description">{repo.description}</p>}
+  <p class="meta">
+    {repo.language && <span class="language"><span class="dot" aria-hidden="true"></span>{repo.language}</span>}
+    <span class="stars" aria-label={`${repo.stargazers_count} stars`}>
+      <svg class="star" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <path fill="currentColor" d="M8 .8l2.1 4.4 4.8.7-3.5 3.4.8 4.8L8 11.8l-4.3 2.3.9-4.8L1 5.9l4.8-.7z" />
+      </svg>
+      {repo.stargazers_count}
+    </span>
+    <span class="updated">{humanizeSince(repo.pushed_at)}</span>
+    {hasSite && <a class="source" href={repo.html_url}>source on GitHub</a>}
+  </p>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    background: #fff;
+    border: 1px solid var(--color-blue-lightest);
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+
+  .card:hover {
+    border-color: var(--color-blue-mid);
+    box-shadow: 0 2px 10px rgba(41, 65, 117, 0.12);
+  }
+
+  h3 {
+    font-size: 1.15rem;
+    margin: 0;
+  }
+
+  h3 a {
+    color: var(--color-blue);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    text-decoration: underline;
+  }
+
+  /* Cover the whole card with the repo link without an extra wrapper. */
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .card {
+    position: relative;
+  }
+
+  .description {
+    margin: 0;
+    color: var(--color-blue-dark);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: var(--color-blue);
+  }
+
+  .language,
+  .stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .dot {
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    background: var(--color-violet-mid);
+  }
+
+  .star {
+    color: var(--color-gold);
+  }
+
+  .stars {
+    font-weight: 600;
+  }
+
+  /* Sits above the card-covering title-link overlay so it stays clickable. */
+  .source {
+    position: relative;
+    color: var(--color-violet);
+  }
+</style>

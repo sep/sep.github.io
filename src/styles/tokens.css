@@ -1,0 +1,22 @@
+/* SEP brand tokens — see FOSSS.md §7. Usage priority: Blue → Violet → Teal → Burgundy → Gold. */
+:root {
+  --color-ink: #0e1425;
+  --color-snow: #fbfcfe;
+
+  --color-blue-dark: #1b2a4b;
+  --color-blue: #294175;
+  --color-blue-mid: #9ab2e4;
+  --color-blue-light: #bccef5;
+  --color-blue-lightest: #e7edfd;
+
+  --color-violet: #513986;
+  --color-violet-mid: #9c7edd;
+  --color-violet-light: #d0baff;
+  --color-violet-lightest: #eee5ff;
+
+  --color-teal: #006368;
+  --color-burgundy: #811942;
+  --color-gold: #ffd375;
+
+  --font-sans: "Public Sans", Arial, sans-serif;
+}
