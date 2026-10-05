@@ -2,12 +2,12 @@
   "repos": {
     "sep/luxafor-cli": {
       "first_seen": "2026-09-21",
-      "last_seen": "2026-09-28",
+      "last_seen": "2026-10-05",
       "last_pushed_at": "2026-09-22T14:44:06Z"
     },
     "sep/cc-status-plugin": {
       "first_seen": "2026-09-21",
-      "last_seen": "2026-09-28",
+      "last_seen": "2026-10-05",
       "last_pushed_at": "2026-09-11T14:49:19Z"
     }
   },
